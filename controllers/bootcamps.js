@@ -1,21 +1,95 @@
+const Bootcamp = require('../models/Bootcamp');
+
 module.exports = {
-	getBootcamps: (req, res, next) => {
-		res.send('show all bootcamps');
+	getBootcamps: async (req, res, next) => {
+		try {
+			const bootcamps = await Bootcamp.find();
+			res
+				.status(200)
+				.json({ success: true, count: bootcamps.length, data: bootcamps });
+		} catch (error) {
+			res.status(400).json({ success: false });
+		}
 	},
 
-	getBootcamp: (req, res, next) => {
-		res.send('specific bootcamp');
+	getBootcamp: async (req, res, next) => {
+		try {
+			const bootcamp = await Bootcamp.findById(req.params.id);
+
+			if (!bootcamp)
+				return res.status(400).json({
+					success: false
+				});
+
+			res.status(201).json({
+				success: true,
+				data: bootcamp
+			});
+		} catch (error) {
+			res.status(400).json({
+				success: false
+			});
+		}
 	},
 
-	createBootcamp: (req, res, next) => {
-		res.send('create bootcamp');
+	createBootcamp: async (req, res, next) => {
+		try {
+			const bootcamp = await Bootcamp.create(req.body);
+			res.status(201).json({
+				success: true,
+				data: bootcamp
+			});
+		} catch (error) {
+			res.status(400).json({
+				success: false
+			});
+		}
 	},
 
-	updateBootcamp: (req, res, next) => {
-		res.send('update bootcamp');
+	updateBootcamp: async (req, res, next) => {
+		try {
+			const bootcamp = await Bootcamp.findByIdAndUpdate(
+				req.params.id,
+				req.body,
+				{
+					new: true,
+					runValidators: true
+				}
+			);
+
+			if (!bootcamp)
+				return res.status(400).json({
+					success: false
+				});
+
+			res.status(200).json({
+				success: true,
+				data: bootcamp
+			});
+		} catch (error) {
+			res.status(400).json({
+				success: false
+			});
+		}
 	},
 
-	deleteBootcamp: (req, res, next) => {
-		res.send('delete route');
+	deleteBootcamp: async (req, res, next) => {
+		try {
+			const bootcamp = await Bootcamp.findByIdAndRemove(req.params.id);
+
+			if (!bootcamp)
+				return res.status(400).json({
+					success: false
+				});
+
+			res.status(200).json({
+				success: true,
+				data: {}
+			});
+		} catch (error) {
+			res.status(400).json({
+				success: false
+			});
+		}
 	}
 };
